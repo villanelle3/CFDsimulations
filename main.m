@@ -20,21 +20,24 @@ ymax = 1;       % Limite superior em y
 % Transformada de Fourier das componentes de velocidade
 u_hat = fft2(u);   
 v_hat = fft2(v);
+k_hat = fft2(K);
+eps_hat = fft2(epsilon);
 
 % Números de onda
-% [kx, ky, k2] = numero_de_onda(rows, columns);
-[kx, ky, k2] = calcular_wave_numbers(rows, columns, dx, dy);
-% [kx, ky, k2] = calcular_wave_numbers2(rows, columns, xmax, ymax);
+% [kx, ky, k2] = calcular_wave_numbers(rows, columns, dx, dy);    % kx=1x8, ky=1x16, k2 = 8x16.  -0.5366,  0.3384, 0.1616 
+
+[kx, ky, k2] = define_wave_numbers2(rows, columns, 10, 1);
+k2 = k2';
 
 % Parâmetros de integração temporal
 tf = 10;            % Tempo final da simulação
 dt = 10e-4;         % Passo de tempo
 
 % -------------------------------------------------------------------------
+
 % Loop principal de integração temporal
 for i = 1:ceil(tf/dt)
-    [u_hat, v_hat] = rk4_kepsilon(u_hat, v_hat, mut, kx, ky, k2, rows, columns, Re, dt);
-        
+    [u_hat, v_hat] = rk4_kepsilon(u_hat, v_hat, k_hat, eps_hat, mut, kx, ky, k2, rows, columns, Re, dt);
     % Atualiza o tempo
     tempo = i*dt;
     % disp(tempo)
