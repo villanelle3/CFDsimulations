@@ -1,4 +1,4 @@
-function [viscx, viscy] = visc(Re, nx, ny, kx, ky, mut, ut, vt)
+function [viscx, viscy] = visc(Re, nx, ny, kx, ky, mut, ut, vt, k_hat, eps_hat)
     [~, ~, ~, mudynamic, ~, ~, ~, ~, ~, ~, ~, ~, ~, ~] = constantes(Re);
     dudx = zeros(nx, ny); 
     dudy = zeros(nx, ny); 
@@ -18,7 +18,9 @@ function [viscx, viscy] = visc(Re, nx, ny, kx, ky, mut, ut, vt)
     dvdy = real(ifft2(dvdy));
 
     % Compute effective viscosity
-    nief = mut + mudynamic;
+    % nief = mut + mudynamic;
+    nief = calculate_turbulent_viscosity(k_hat, eps_hat, mudynamic);
+
     
     % Compute stress tensor components in Fourier space
     tauxx = 2.0 * nief .* dudx;
